@@ -2,28 +2,16 @@ import { Button } from "@/components/ui/button";
 import { useCategories } from "../hooks/use-category";
 import { useEffect, useState } from "react";
 import type { CategoryDTO } from "../dtos/category.dto";
-
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuPortal,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ChevronDown } from "lucide-react";
-
+import { ChevronDown, Sparkles } from "lucide-react";
 
 export function CategoryMenu() {
-
     const { data: categories, isLoading } = useCategories();
-
     const [visibleItems, setVisibleItems] = useState<CategoryDTO[]>([]);
     const [hiddenItems, setHiddenItems] = useState<CategoryDTO[]>([]);
 
@@ -33,46 +21,78 @@ export function CategoryMenu() {
             setHiddenItems(categories.slice(5))
         }
     }, [categories])
+
     return (
-        < nav className="w-full py-4 flex items-center justify between">
-            <div className="flex flex-col">
-                <h5 className="font-medium text-2xl text-gray-900">Nossos Produtos</h5>
-                <p className="text-sn text-gray-500">Novos produtos todos os dias</p>
-            </div>
-            <div className="flex items-center justify-end gap-2">
-                <Button variant="ghost">
-                    Todos
-                </Button>
-                {visibleItems.map((category) => (
-                    <Button
-                        key={category.id}
-                        variant="ghost"
-                    >
-                        {category.name}
-                    </Button>
-                ))}
+        <nav className="w-full py-8 px-4 bg-gradient-to-br from-gray-50 via-white to-gray-50">
+            <div className="max-w-7xl mx-auto">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
+                    <div className="flex items-start gap-3">
+                        <div className="p-2.5 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
+                            <Sparkles className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex flex-col">
+                            <h5 className="font-bold text-3xl text-gray-900">
+                                Nossos Produtos
+                            </h5>
+                            <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
+                                <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                Novos produtos todos os dias
+                            </p>
+                        </div>
+                    </div>
 
-                {hiddenItems.length > 0 && (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button>
-                                Mais
-                                <ChevronDown />
+                    {/* Category Pills */}
+                    <div className="flex items-center flex-wrap gap-2">
+                        <Button
+                            variant="ghost"
+                            className="rounded-full px-6 transition-all duration-300 hover:scale-105 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-600 hover:shadow-md"
+                        >
+                            Todos
+                        </Button>
+
+                        {visibleItems.map((category) => (
+                            <Button
+                                key={category.id}
+                                variant="ghost"
+                                className="rounded-full px-6 transition-all duration-300 hover:scale-105 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-600 hover:shadow-md"
+                            >
+                                {category.name}
                             </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            {hiddenItems.map((category) => (
-                                <DropdownMenuItem
-                                    key={category.id}
-                                >
-                                    {category.name}
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                )}
-            </div>
-        </nav >
+                        ))}
 
+                        {hiddenItems.length > 0 && (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className="rounded-full px-6 gap-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-600 hover:border-blue-300 transition-all duration-300 hover:scale-105 hover:shadow-md border-2"
+                                    >
+                                        Mais
+                                        <ChevronDown className="w-4 h-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    align="end"
+                                    className="w-56 rounded-2xl shadow-xl border-2 p-2"
+                                >
+                                    {hiddenItems.map((category) => (
+                                        <DropdownMenuItem
+                                            key={category.id}
+                                            className="rounded-xl px-4 py-3 cursor-pointer transition-all hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-600"
+                                        >
+                                            {category.name}
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        )}
+                    </div>
+                </div>
+
+                {/* Decorative Line */}
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+            </div>
+        </nav>
     )
 }
