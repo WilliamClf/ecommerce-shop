@@ -9,11 +9,15 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown, Sparkles } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 
 export function CategoryMenu() {
     const { data: categories, isLoading } = useCategories();
     const [visibleItems, setVisibleItems] = useState<CategoryDTO[]>([]);
     const [hiddenItems, setHiddenItems] = useState<CategoryDTO[]>([]);
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const selectedCategoryId = searchParams.get("categoryId");
 
     useEffect(() => {
         if (categories) {
@@ -22,10 +26,22 @@ export function CategoryMenu() {
         }
     }, [categories])
 
+    const handleCategoryClick = (categoryId?: string) => {
+        if (categoryId) {
+            setSearchParams({ categoryId });
+        } else {
+            setSearchParams({});
+        }
+    };
+
+    const isActive = (categoryId?: string) => {
+        if (!categoryId && !selectedCategoryId) return true;
+        return categoryId === selectedCategoryId;
+    };
+
     return (
         <nav className="w-full py-8 px-4 bg-gradient-to-br from-gray-50 via-white to-gray-50">
             <div className="max-w-7xl mx-auto">
-                {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
                     <div className="flex items-start gap-3">
                         <div className="p-2.5 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
@@ -41,12 +57,14 @@ export function CategoryMenu() {
                             </p>
                         </div>
                     </div>
-
-                    {/* Category Pills */}
                     <div className="flex items-center flex-wrap gap-2">
                         <Button
                             variant="ghost"
-                            className="rounded-full px-6 transition-all duration-300 hover:scale-105 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-600 hover:shadow-md"
+                            onClick={() => handleCategoryClick()}
+                            className={`rounded-full px-6 transition-all duration-300 hover:scale-105 hover:shadow-md ${isActive()
+                                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700"
+                                : "hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-600"
+                                }`}
                         >
                             Todos
                         </Button>
@@ -55,7 +73,11 @@ export function CategoryMenu() {
                             <Button
                                 key={category.id}
                                 variant="ghost"
-                                className="rounded-full px-6 transition-all duration-300 hover:scale-105 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-600 hover:shadow-md"
+                                onClick={() => handleCategoryClick(category.id)}
+                                className={`rounded-full px-6 transition-all duration-300 hover:scale-105 hover:shadow-md ${isActive(category.id)
+                                    ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700"
+                                    : "hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-600"
+                                    }`}
                             >
                                 {category.name}
                             </Button>
@@ -79,7 +101,11 @@ export function CategoryMenu() {
                                     {hiddenItems.map((category) => (
                                         <DropdownMenuItem
                                             key={category.id}
-                                            className="rounded-xl px-4 py-3 cursor-pointer transition-all hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-600"
+                                            onClick={() => handleCategoryClick(category.id)}
+                                            className={`rounded-xl px-4 py-3 cursor-pointer transition-all ${isActive(category.id)
+                                                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+                                                : "hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-600"
+                                                }`}
                                         >
                                             {category.name}
                                         </DropdownMenuItem>
