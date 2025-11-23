@@ -49,7 +49,7 @@ export function CategoryMenu() {
                         </div>
                         <div className="flex flex-col">
                             <h5 className="font-bold text-3xl text-gray-900">
-                                Nossos Produtos
+                                Lojão W&M
                             </h5>
                             <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
                                 <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
