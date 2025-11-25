@@ -3,11 +3,14 @@ import { useProductById } from "@/cases/products/hooks/use-product";
 import { Button } from "@/components/ui/button";
 import { FormattedNumber, IntlProvider } from "react-intl";
 import { ArrowLeft, Package, Tag, Building2, ShoppingCart, Truck, Shield, RefreshCw } from "lucide-react";
+import { useCart } from "@/cases/cart/hooks/use-cart";
+import { CartButton } from "@/components/ui/cart-button";
 
 export function ProductDetailPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { data: product, isLoading, error } = useProductById(id!);
+    const { addToCart } = useCart();
 
     if (isLoading) {
         return (
@@ -38,7 +41,7 @@ export function ProductDetailPage() {
         <div className="min-h-screen bg-gray-50">
             {/* Header da Loja */}
             <div className="w-full py-6 px-4 bg-white border-b shadow-sm">
-                <div className="max-w-7xl mx-auto">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="p-2.5 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
                             <Package className="w-6 h-6 text-white" />
@@ -53,6 +56,9 @@ export function ProductDetailPage() {
                             </p>
                         </div>
                     </div>
+
+                    {/* Botão do Carrinho */}
+                    <CartButton />
                 </div>
             </div>
 
@@ -187,7 +193,7 @@ export function ProductDetailPage() {
 
                             {/* Botão Adicionar */}
                             <Button
-                                onClick={() => console.log('Adicionado:', product.name)}
+                                onClick={() => addToCart(product)}
                                 className="w-full h-12 text-base bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg"
                             >
                                 <ShoppingCart className="w-5 h-5 mr-2" />

@@ -7,7 +7,7 @@ export interface BrandDTO {
 
 
 export interface ProductDTO {
-  id?: string;
+  id: string;
   name: string;
   description?: string;
   price: number;

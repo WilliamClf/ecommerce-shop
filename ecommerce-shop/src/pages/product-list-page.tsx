@@ -2,12 +2,30 @@ import { CategoryMenu } from "@/cases/categories/components/category-menu";
 import { ProductCard } from "@/cases/products/components/product-card";
 import { useProducts } from "@/cases/products/hooks/use-product";
 import { Link, useSearchParams } from "react-router-dom";
+import { useMemo } from "react";
 
 export function ProductListPage() {
     const [searchParams] = useSearchParams();
     const categoryId = searchParams.get("categoryId");
+    const searchQuery = searchParams.get("search");
 
     const { data: products, isLoading } = useProducts(categoryId || undefined);
+
+    // Filtrar produtos localmente por busca
+    const filteredProducts = useMemo(() => {
+        if (!products) return [];
+
+        if (!searchQuery) return products;
+
+        const query = searchQuery.toLowerCase().trim();
+
+        return products.filter((product) => {
+            const matchName = product.name.toLowerCase().includes(query);
+            const matchDescription = product.description?.toLowerCase().includes(query) || false;
+
+            return matchName || matchDescription;
+        });
+    }, [products, searchQuery]);
 
     return (
         <>
@@ -22,8 +40,8 @@ export function ProductListPage() {
                     </div>
                 ) : (
                     <div className="flex mt-8 gap-8 flex-wrap">
-                        {products && products.length > 0 ? (
-                            products.map((product) => (
+                        {filteredProducts.length > 0 ? (
+                            filteredProducts.map((product) => (
                                 <Link
                                     key={product.id}
                                     to={`/product/${product.id}`}
@@ -33,12 +51,15 @@ export function ProductListPage() {
                             ))
                         ) : (
                             <div className="w-full flex flex-col items-center justify-center py-16 gap-4">
-                                <div className="text-6xl">📦</div>
+                                <div className="text-6xl">🔍</div>
                                 <h3 className="text-xl font-semibold text-gray-700">
                                     Nenhum produto encontrado
                                 </h3>
                                 <p className="text-gray-500">
-                                    Tente selecionar outra categoria
+                                    {searchQuery
+                                        ? `Nenhum resultado para "${searchQuery}"`
+                                        : "Tente selecionar outra categoria"
+                                    }
                                 </p>
                             </div>
                         )}
