@@ -1,22 +1,28 @@
 import { useCart } from "@/cases/cart/hooks/use-cart";
+import { useAuth } from "@/cases/auth/hooks/use-auth";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { X, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { FormattedNumber, IntlProvider } from "react-intl";
 
 export function CartSidebar() {
     const { items, isOpen, closeCart, removeFromCart, updateQuantity, getTotalPrice, clearCart } = useCart();
+    const { customer } = useAuth();
+    const navigate = useNavigate();
 
     if (!isOpen) return null;
 
     return (
         <>
+            {/* Overlay */}
             <div
                 className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm transition-opacity"
                 onClick={closeCart}
             />
 
+            {/* Sidebar */}
             <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col animate-in slide-in-from-right duration-300">
-
+                {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-blue-50 to-purple-50">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow-lg">
@@ -39,6 +45,7 @@ export function CartSidebar() {
                     </Button>
                 </div>
 
+                {/* Items */}
                 <div className="flex-1 overflow-y-auto p-6">
                     {items.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-full gap-4">
@@ -62,6 +69,7 @@ export function CartSidebar() {
                                     key={item.product.id}
                                     className="flex gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
                                 >
+                                    {/* Imagem */}
                                     <div className="w-20 h-20 bg-white rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 border">
                                         {item.product.imageUrl ? (
                                             <img
@@ -74,6 +82,7 @@ export function CartSidebar() {
                                         )}
                                     </div>
 
+                                    {/* Info */}
                                     <div className="flex-1 min-w-0">
                                         <h3 className="font-semibold text-sm text-gray-900 line-clamp-2 mb-1">
                                             {item.product.name}
@@ -82,6 +91,7 @@ export function CartSidebar() {
                                             {item.product.category.name}
                                         </p>
 
+                                        {/* Controles de quantidade */}
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2 bg-white rounded-lg border">
                                                 <Button
@@ -126,6 +136,7 @@ export function CartSidebar() {
                                             </Button>
                                         </div>
 
+                                        {/* Preço */}
                                         <div className="mt-3 pt-3 border-t">
                                             <div className="flex justify-between items-center">
                                                 <p className="text-xs text-gray-500">
@@ -153,6 +164,7 @@ export function CartSidebar() {
                                 </div>
                             ))}
 
+                            {/* Botão limpar carrinho */}
                             {items.length > 0 && (
                                 <Button
                                     variant="ghost"
@@ -171,6 +183,7 @@ export function CartSidebar() {
                     )}
                 </div>
 
+                {/* Footer - Total e Checkout */}
                 {items.length > 0 && (
                     <div className="border-t bg-white p-6 space-y-4 shadow-lg">
                         <div className="space-y-3">
@@ -218,7 +231,13 @@ export function CartSidebar() {
                         <Button
                             className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg"
                             onClick={() => {
-                                alert(`Finalizando compra de ${items.length} ${items.length === 1 ? 'item' : 'itens'}!\n\nTotal: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(getTotalPrice() * 0.9)}\n\nFuncionalidade de checkout será implementada em breve!`);
+                                if (!customer) {
+                                    closeCart();
+                                    navigate("/login");
+                                } else {
+                                    closeCart();
+                                    navigate("/checkout");
+                                }
                             }}
                         >
                             Finalizar Compra
